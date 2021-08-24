@@ -23,5 +23,13 @@ public class CardValidationTest {
 	public void testBadCreditCardNumber() {
 		assertFalse(Methods.verifyCreditCard(1234567890123456L));
 	}
+	
+	/**
+	 * Tests the method verifyCreditCard with a short card number
+	 */
+	@Test
+	public void testShortCreditCardNumber() {
+		assertFalse(Methods.verifyCreditCard(1234567890123L));
+	}
 
 }
