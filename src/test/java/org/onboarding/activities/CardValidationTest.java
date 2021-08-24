@@ -8,15 +8,20 @@ import org.junit.jupiter.api.Test;
  */
 public class CardValidationTest {
 
-	
+	/**
+	 * Tests the method verifyCreditCard with a good card number
+	 */
 	@Test
 	public void testGoodCreditCardNumber() {
-		assertTrue(Methods.varigyCreditCard(1234567890123452L));
+		assertTrue(Methods.verifyCreditCard(1234567890123452L));
 	}
 	
+	/**
+	 * Tests the method verifyCreditCard with a bad card number
+	 */
 	@Test
 	public void testBadCreditCardNumber() {
-		assertFalse(Methods.varigyCreditCard(1234567890123456L));
+		assertFalse(Methods.verifyCreditCard(1234567890123456L));
 	}
 
 }
