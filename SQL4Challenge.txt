@@ -1,0 +1,69 @@
+CREATE TABLE worker (
+	worker_id NUMBER PRIMARY KEY,
+	first_name VARCHAR2(50) NOT NULL,
+	last_name VARCHAR2(50) NOT NULL,
+	salary NUMBER(6) NOT NULL,
+	joining_date DATE NOT NULL,
+	department VARCHAR2(10) NOT NULL
+);
+
+CREATE TABLE bonus (
+	worker_ref_id NUMBER NOT NULL,
+	bonus_date DATE NOT NULL,
+	bonus_amount NUMBER(5) NOT NULL,
+	CONSTRAINT pk_workerdate PRIMARY KEY(worker_ref_id, bonus_date, bonus_amount),
+	CONSTRAINT fk_bonus_worker_id FOREIGN KEY(worker_ref_id) REFERENCES worker(worker_id)
+);
+
+CREATE TABLE title (
+	worker_ref_id NUMBER PRIMARY KEY REFERENCES worker(worker_id),
+	worker_title VARCHAR(20) NOT NULL,
+	affected_from DATE NOT NULL
+);
+
+INSERT INTO worker VALUES(1,	'Rick', 'Smith', 100000, (TO_DATE('2021-02-20 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'HR');
+INSERT INTO worker VALUES(2,	'Sam',	'Williams',	80000,	(TO_DATE('2021-06-11 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'Admin');
+INSERT INTO worker VALUES(3,	'John',	'Brown',	300000,	(TO_DATE('2021-02-20 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'HR');
+INSERT INTO worker VALUES(4,	'Amy',	'Jones',	500000,	(TO_DATE('2021-02-20 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'Admin');
+INSERT INTO worker VALUES(5,	'Sean',	'Garcia',	500000,	(TO_DATE('2021-06-11 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'Admin');
+INSERT INTO worker VALUES(6,	'Ryan',	'Miller',	200000,	(TO_DATE('2021-06-11 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'Account');
+INSERT INTO worker VALUES(7,	'Patty', 'Davis',	75000,	(TO_DATE('2021-01-20 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'Account');
+INSERT INTO worker VALUES(8,	'Monica', 'Rodriguez',	90000,	(TO_DATE('2021-04-11 09:00:00', 'yyyy-mm-dd HH24:MI:SS')), 'Admin');
+
+INSERT INTO bonus VALUES(1,	(TO_DATE('2021-02-20 00:00:00', 'yyyy-mm-dd HH24:MI:SS')),	5000);
+INSERT INTO bonus VALUES(2,	(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')),	3000);
+INSERT INTO bonus VALUES(3,	(TO_DATE('2021-02-20 00:00:00', 'yyyy-mm-dd HH24:MI:SS')),	4000);
+INSERT INTO bonus VALUES(1,	(TO_DATE('2021-02-20 00:00:00', 'yyyy-mm-dd HH24:MI:SS')),	4500);
+INSERT INTO bonus VALUES(2,	(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')),	3500);
+
+INSERT INTO title VALUES(1,	'Manager',		(TO_DATE('2021-02-20 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+INSERT INTO title VALUES(2,	'Executive',	(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+INSERT INTO title VALUES(8,	'Executive',	(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+INSERT INTO title VALUES(5,	'Manager',		(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+INSERT INTO title VALUES(4,	'Asst. Manager',	(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+INSERT INTO title VALUES(7,	'Executive',	(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+INSERT INTO title VALUES(6,	'Lead',		(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+INSERT INTO title VALUES(3,	'Lead',		(TO_DATE('2021-06-11 00:00:00', 'yyyy-mm-dd HH24:MI:SS')));
+
+-- the statements for the challenge
+
+-- a) Write an SQL query to fetch worker names with salaries >= 50000 and <= 100000 
+SELECT first_name, last_name FROM worker WHERE salary >= 50000 AND salary <= 100000;
+
+-- b) Write an SQL query to fetch the no. of workers for each department in the descending order.
+SELECT COUNT(first_name) AS "Employees", department FROM worker GROUP BY department ORDER BY COUNT(first_name) DESC;
+
+-- c) Write an SQL query to fetch intersecting records of two tables.
+SELECT w.first_name, w.last_name, w.salary, w.department, b.bonus_date, b.bonus_amount
+FROM worker w, bonus b
+WHERE w.worker_id = b.worker_ref_id;
+
+SELECT w.first_name, w.last_name, t.worker_title, w.salary, w.department
+FROM worker w, title t
+WHERE w.worker_id = t.worker_ref_id
+ORDER BY t.worker_title;
+
+-- d) Write an SQL query to determine the 5th highest salary without using TOP or limit method. 
+SELECT first_name, last_name, salary FROM (
+SELECT w.*, ROW_NUMBER() OVER (ORDER BY salary DESC) R FROM worker w
+) WHERE R = 5;
